@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Win + Transform Test</title>
+    <link rel="stylesheet" href="test.css">
+</head>
+<body>
+
+    <!--
+        Simulates the full win sequence for Player 2 (Fire):
+          1. Panel flies to centre and scales up
+          2. Hearts absorbed into character (CSS only approximation — actual absorption is JS)
+          3. Character flash-transforms into Firetranformed.png
+          4. Heart row is empty, leaving poem space
+    -->
+    <div id="game_screen">
+
+        <div class="player_panel" id="panel_2">
+            <img class="panel_bg" src="assets/rectangular2.png" alt="">
+            <img class="panel_character transformed" src="assets/Firetranformed.png" alt="Player 2 transformed">
+            <div class="heart_row">
+                <!-- Hearts hidden after absorption — space reserved for poem -->
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

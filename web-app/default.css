@@ -1,0 +1,305 @@
+/* ── Local fonts (bundled so the game works offline / on any machine) ── */
+
+@font-face {
+    font-family: "Cinzel Decorative";
+    font-weight: 700;
+    font-style: normal;
+    font-display: block;
+    src: url("assets/fonts/CinzelDecorative-Bold.ttf") format("truetype");
+}
+
+
+@font-face {
+    font-family: "Cinzel";
+    font-weight: 700;
+    font-style: normal;
+    font-display: block;
+    src: url("assets/fonts/Cinzel-Bold.ttf") format("truetype");
+}
+
+
+
+@font-face {
+    font-family: "UnifrakturCook";
+    font-weight: 700;
+    font-style: normal;
+    font-display: block;
+    src: url("assets/fonts/UnifrakturCook-Bold.ttf") format("truetype");
+}
+
+
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
+
+/* ── Full-screen menu container ── */
+
+#menu_screen {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: black;
+}
+
+
+/* ── Background layers (crossfade between closed and open portal) ── */
+
+.background_layer {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transition: opacity 0.8s ease;
+    z-index: 0;
+}
+
+#portal_closed {
+    background-image: url('assets/MenuBackground1.png');
+    opacity: 1;
+}
+
+#portal_open {
+    background-image: url('assets/MenuBackground2.png');
+    opacity: 0;
+}
+
+#menu_screen.portal_open #portal_open {
+    opacity: 1;
+}
+
+
+/* ── LABYRINTH title ── */
+
+#game_title {
+    position: absolute;
+    left: 12%;
+    top: 10%;
+    z-index: 10;
+    filter: drop-shadow(4px 4px 4px #0F1024);
+    font-family: "Cinzel Decorative", serif;
+    font-size: clamp(48px, 8.3vw, 128px);
+    font-weight: 700;
+    line-height: normal;
+    text-transform: uppercase;
+    background: linear-gradient(180deg, #FFFFFF 0%, #5D6C9D 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+
+/* ── Player picker ── */
+
+#ui_panel {
+    position: absolute;
+    left: 25%;
+    top: 30%;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.8rem;
+}
+
+#count_selection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+#count_selection_label {
+    color: #AFC8F7;
+    text-shadow: 0 4px 4px #0E1023;
+    font-family: "Cinzel", serif;
+    font-size: clamp(16px, 2.1vw, 32px);
+    font-weight: 700;
+    line-height: normal;
+    text-transform: uppercase;
+}
+
+#player_buttons {
+    display: flex;
+    gap: 18px;
+}
+
+.player_button {
+    appearance: none;
+    -webkit-appearance: none;
+    background: #0E0F23;
+    border: 2px solid #7386C9;
+    filter: drop-shadow(4px 4px 4px #0E1122);
+    border-radius: 50%;
+    height: clamp(55px, 5vw, 75px);
+    width: clamp(55px, 5vw, 75px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0.65;
+    transition: opacity 0.2s, border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.player_button span {
+    font-family: "UnifrakturCook", serif;
+    font-size: clamp(30px, 3vw, 50px);
+    font-weight: 700;
+    line-height: 1;
+    background: linear-gradient(180deg, #FFF 0%, #92F9F7 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    pointer-events: none;
+}
+
+.player_button:hover {
+    opacity: 0.85;
+    border-color: #A1F9F2;
+}
+
+.player_button.selected {
+    opacity: 1;
+    background: #47ADB7;
+    border-color: #A1F9F2;
+    border-width: 3px;
+    box-shadow: 0 0 16px #A1F9F2,
+            inset 0 0 8px #A1F9F2;
+}
+
+
+/* ── Start button ── */
+
+#start_button {
+    width: clamp(140px, 16vw, 260px);
+    padding: clamp(8px, 0.7vw, 12px) 0;
+    border-radius: 14px;
+    border: 3px solid #A1F9F2;
+    background: linear-gradient(180deg, rgba(161, 249, 242, 0.50) 0%, rgba(71, 173, 183, 0.50) 100%);
+    box-shadow: 4px 4px 8px #0F1122;
+    font-family: "Cinzel Decorative", serif;
+    font-size: clamp(15px, 1.8vw, 26px);
+    font-weight: 400;
+    color: #BFFFFB;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.25;
+    cursor: not-allowed;
+    pointer-events: none;
+    margin-top: 1rem;
+    transition: opacity 0.3s, box-shadow 0.3s;
+}
+
+#start_button:not(:disabled) {
+    opacity: 1;
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+#start_button:not(:disabled):hover {
+    background: linear-gradient(180deg, rgba(161, 249, 242, 0.70) 0%, rgba(71, 173, 183, 0.70) 100%);
+    box-shadow: 4px 4px 20px rgba(161, 249, 242, 0.45);
+}
+
+
+/* ── Characters ── */
+
+#characters {
+    position: absolute;
+    bottom: 14%;
+    left: 16%;
+    z-index: 10;
+    display: flex;
+    align-items: flex-end;
+    gap: 45px;
+}
+
+.character {
+    display: none;
+    align-items: flex-end;
+}
+
+.character.visible {
+    display: flex;
+    animation: slide-up ease-out both;
+}
+
+.character[data-count="1"].visible { animation-duration: 3.2s; }
+.character[data-count="2"].visible { animation-duration: 2.6s; }
+.character[data-count="3"].visible { animation-duration: 3.9s; }
+.character[data-count="4"].visible { animation-duration: 2.9s; }
+
+.character img {
+    height: 200px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+}
+
+.character.visible img {
+    animation: floating ease-in-out infinite;
+}
+
+.character[data-count="1"].visible img { animation-duration: 3.2s; }
+.character[data-count="2"].visible img { animation-duration: 2.6s; }
+.character[data-count="3"].visible img { animation-duration: 3.9s; }
+.character[data-count="4"].visible img { animation-duration: 2.9s; }
+
+@keyframes floating {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-12px); }
+}
+
+/* ── Portal blur-out (menu content blurs as flash arrives) ── */
+
+@keyframes menu-blur-out {
+    from { filter: blur(0px); }
+    to   { filter: blur(18px); }
+}
+
+#menu_screen.portal-entering {
+    animation: menu-blur-out 0.4s ease-in forwards;
+}
+
+
+/* ── Portal transition flash (exit) ── */
+
+#portal_flash {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0;
+}
+
+@keyframes portal-flash-out {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Background set here so it's already full-screen — only opacity animates */
+#portal_flash.active {
+    background: radial-gradient(circle at 50% 50%, white 0%, rgba(161, 249, 242, 1) 28%, rgba(71, 173, 183, 0.95) 58%, rgba(10, 30, 100, 0.92) 100%);
+    animation: portal-flash-out 0.35s ease-in forwards;
+}
+
+
+@keyframes slide-up {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

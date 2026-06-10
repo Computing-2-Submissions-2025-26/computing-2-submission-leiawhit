@@ -1,9 +1,58 @@
-<!-- In HTML Comments are written like this -->
-<!-- They can all be removed for your apps -->
-<!doctype html> <!-- This first line tells browsers to expect modern standard html 5 -->
-<html lang="en-gb"> <!-- This is indicates the page is written in British English, useful for accessibility -->
-<meta charset="utf-8"> <!-- This indicates how the file is encoded. utf-8 is standard -->
-<title>Your Web-app Title</title> <!-- All pages need a title, this will be displayed in the browser's title bar -->
-<link rel="stylesheet" href="default.css"> <!-- Import style sheet – default.css -->
-<link rel="icon" href="./assets/favicon.png"> <!-- Import 'Favorites Icon' – favicon.png -->
-<script type="module" src="main.js"></script> <!-- Load the main script. Must be type="module". Have only one of these -->
+<!DOCTYPE html>
+<html lang="en-gb">
+<meta charset="utf-8">
+<title>Labyrinth — New Game</title>
+<link rel="stylesheet" href="default.css">
+<link rel="icon" href="./assets/favicon.png">
+<script src="menu.js" defer></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<body>
+    <main id="menu_screen">
+
+        <!-- Two background layers so we can crossfade between closed and open portal -->
+        <div id="portal_closed" class="background_layer"></div>
+        <div id="portal_open" class="background_layer"></div>
+
+        <!-- LABYRINTH title -->
+        <h1 id="game_title">Labyrinth</h1>
+
+        <!-- Player count and start button grouped so they can be centred together -->
+        <div id="ui_panel">
+            <section id="count_selection">
+                <h2 id="count_selection_label">How Many Players?</h2>
+                <div id="player_buttons">
+                    <button class="player_button" data-count="2"><span>2</span></button>
+                    <button class="player_button" data-count="3"><span>3</span></button>
+                    <button class="player_button" data-count="4"><span>4</span></button>
+                </div>
+            </section>
+
+            <!-- Disabled until a player count is picked -->
+            <button id="start_button" type="button" disabled>Start Game</button>
+        </div>
+
+        <!-- Characters slide in at the bottom once a count is selected -->
+        <div id="characters">
+            <div class="character" data-count="1">
+                <img src="assets/Earthcharacter.png" alt="Player 1">
+            </div>
+            <div class="character" data-count="2">
+                <img src="assets/Firecharacter.png" alt="Player 2">
+            </div>
+            <div class="character" data-count="3">
+                <img src="assets/Shadowcharacter.png" alt="Player 3">
+            </div>
+            <div class="character" data-count="4">
+                <img src="assets/WindCharacter.png" alt="Player 4">
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Portal flash overlay — triggered by menu.js before navigation -->
+    <div id="portal_flash"></div>
+
+</body>
+</html>

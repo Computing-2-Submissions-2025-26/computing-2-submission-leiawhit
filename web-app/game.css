@@ -1,0 +1,587 @@
+﻿/* ── Game screen — fixed 1440 × 832 canvas, scaled to viewport by game.js ── */
+
+@font-face {
+    font-family: "cinzel decorative regular";
+    font-weight: 700;
+    font-style: normal;
+    font-display: block;
+    src: url("assets/fonts/CinzelDecorative-Regular.ttf") format("truetype");
+}
+
+body {
+    background: url("assets/GameScreenBackground.png") center/cover no-repeat fixed;
+    background-color: #0E1124;
+}
+
+#game_screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 1440px;
+    height: 832px;
+    overflow: hidden;
+    background: transparent;
+    transform-origin: top left;
+    animation: game-blur-in 1.3s ease-out both;
+}
+
+@keyframes game-blur-in {
+    from { filter: blur(18px); }
+    to   { filter: blur(0px); }
+}
+
+
+
+/* ── Poem (top-left) ── */
+
+#poem {
+    position: absolute;
+    left: -100px;
+    top: -100px;
+    width: 600px;
+    z-index: 10;
+    pointer-events: none;
+}
+
+
+
+/* ── Player panels (left side) ── */
+
+#player_panels {
+    position: absolute;
+    left: 53px;
+    top: 221px;
+    z-index: 10;
+}
+
+.player_panel {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: -6px;
+    transition: filter 0.4s ease;
+}
+
+#panel_1.active_player { filter: drop-shadow(0 0 6px rgba(80, 200, 80, 0.85)); }
+#panel_2.active_player { filter: drop-shadow(0 0 6px rgba(220, 70, 70, 0.85)); }
+#panel_3.active_player { filter: drop-shadow(0 0 6px rgba(170, 80, 220, 0.85)); }
+#panel_4.active_player { filter: drop-shadow(0 0 6px rgba(150, 160, 175, 0.85)); }
+
+.panel_bg {
+    display: block;
+}
+
+#panel_1 .panel_bg { width: 311px; transform: scaleY(-1); }
+#panel_2 .panel_bg { width: 293px;  }
+#panel_3 .panel_bg { width: 311px;  }
+#panel_4 .panel_bg { width: 313px;  transform: translateX(-5px); }
+
+.panel_character {
+    position: absolute;
+    left: 30px;
+    height: 72px;
+    width: auto;
+    object-fit: contain;
+}
+
+.heart_row {
+    position: absolute;
+    left: 80px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.heart {
+    width: 50px;
+    object-fit: contain;
+}
+
+
+/* ── Spare tile + rotation arrows ── */
+
+#spare_area {
+    position: absolute;
+    left: 110px;
+    top: 600px;
+    width: 195px;
+    height: 200px;
+    z-index: 10;
+}
+
+.rotate_arc {
+    position: absolute;
+    width: 95px;
+    height: 95px;
+}
+
+#rotate_ccw { left: 0; top: 45px; }
+#rotate_cw { right: 0; top: 45px; }
+
+.rotate_tip {
+    position: absolute;
+    width: 18px;
+    height: auto;
+}
+
+#rotate_ccw_tip { left: 8px; top: 118px; }
+#rotate_cw_tip { right: 8px; top: 34px; }
+
+#spare_tile {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 93px;
+    height: 93px;
+}
+
+#spare_tile .tile {
+    width: 93px;
+    height: 93px;
+}
+
+#rotate_arrows {
+    position: absolute;
+    width: 180px;
+    top: 52%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 11;
+}
+
+
+/* ── Game board ── */
+
+#game_board {
+    position: absolute;
+    left: 560px;
+    top: 92px;
+    width: 651px;
+    height: 651px;
+    background-color: #011419;
+    border-radius: 9px;
+    box-shadow: 0 0 0 8px #011419;
+    display: grid;
+    grid-template-columns: repeat(7, 93px);
+    grid-template-rows: repeat(7, 93px);
+    z-index: 10;
+    overflow: visible;
+    transition: box-shadow 0.4s ease;
+}
+
+#game_board.player-1-turn { box-shadow: 0 0 0 8px #011419, 0 0 32px 10px rgba(80, 200, 80, 0.75); }
+#game_board.player-2-turn { box-shadow: 0 0 0 8px #011419, 0 0 32px 10px rgba(220, 70, 70, 0.75); }
+#game_board.player-3-turn { box-shadow: 0 0 0 8px #011419, 0 0 32px 10px rgba(170, 80, 220, 0.75); }
+#game_board.player-4-turn { box-shadow: 0 0 0 8px #011419, 0 0 32px 10px rgba(150, 160, 175, 0.75); }
+
+.tile {
+    position: relative;
+    width: 93px;
+    height: 93px;
+    overflow: visible;
+}
+
+.tile-clip {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.tile img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transform-origin: center center;
+}
+
+.tile img.tile-heart {
+    inset: auto;
+    width: 36px;
+    height: 36px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    object-fit: contain;
+    z-index: 3;
+}
+
+
+/* ── Fire character walk sprite ── */
+
+@keyframes fire-walk {
+    0%       { background-position:   0px   0px; }
+    16.667%  { background-position: -43px   0px; }
+    33.333%  { background-position: -86px   0px; }
+    50%      { background-position:   0px -62px; }
+    66.667%  { background-position: -43px -62px; }
+    83.333%  { background-position: -86px -62px; }
+}
+
+.fire-walk-sprite {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 43px;
+    height: 62px;
+    background-image: url("assets/FireSpritesheet.png");
+    background-repeat: no-repeat;
+    background-size: 129px 124px;
+    background-position: 0 0;
+    z-index: 10000;
+    pointer-events: none;
+    transform-origin: center center;
+    animation: fire-walk 0.48s steps(1, end) infinite;
+}
+
+/* ── Earth character walk sprite ── */
+
+@keyframes earth-walk {
+    0%       { background-position:   0px   0px; }
+    16.667%  { background-position: -43px   0px; }
+    33.333%  { background-position: -86px   0px; }
+    50%      { background-position:   0px -62px; }
+    66.667%  { background-position: -43px -62px; }
+    83.333%  { background-position: -86px -62px; }
+}
+
+.earth-walk-sprite {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 43px;
+    height: 62px;
+    background-image: url("assets/EarthSpritesheet.png");
+    background-repeat: no-repeat;
+    background-size: 129px 124px;
+    background-position: 0 0;
+    z-index: 10000;
+    pointer-events: none;
+    transform-origin: center center;
+    animation: earth-walk 0.48s steps(1, end) infinite;
+}
+
+/* ── Shadow character walk sprite ── */
+
+@keyframes shadow-walk {
+    0%       { background-position:   0px   0px; }
+    16.667%  { background-position: -43px   0px; }
+    33.333%  { background-position: -86px   0px; }
+    50%      { background-position:   0px -62px; }
+    66.667%  { background-position: -43px -62px; }
+    83.333%  { background-position: -86px -62px; }
+}
+
+.shadow-walk-sprite {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 43px;
+    height: 62px;
+    background-image: url("assets/ShadowSpritesheet.png");
+    background-repeat: no-repeat;
+    background-size: 129px 124px;
+    background-position: 0 0;
+    z-index: 10000;
+    pointer-events: none;
+    transform-origin: center center;
+    animation: shadow-walk 0.48s steps(1, end) infinite;
+}
+
+/* ── Wind character walk sprite ── */
+
+@keyframes wind-walk {
+    0%       { background-position:   0px   0px; }
+    16.667%  { background-position: -43px   0px; }
+    33.333%  { background-position: -86px   0px; }
+    50%      { background-position:   0px -62px; }
+    66.667%  { background-position: -43px -62px; }
+    83.333%  { background-position: -86px -62px; }
+}
+
+.wind-walk-sprite {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 43px;
+    height: 62px;
+    background-image: url("assets/WindSpritesheet.png");
+    background-repeat: no-repeat;
+    background-size: 129px 124px;
+    background-position: 0 0;
+    z-index: 10000;
+    pointer-events: none;
+    transform-origin: center center;
+    animation: wind-walk 0.48s steps(1, end) infinite;
+}
+
+@keyframes heart-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.tile-heart.spawning {
+    animation: heart-fade-in 1.2s ease-out forwards;
+}
+
+@keyframes shift-glow {
+    0%, 100% { filter: drop-shadow(0 0 6px rgba(80, 215, 255, 0.7)); }
+    50%       { filter: drop-shadow(0 0 10px rgba(80, 215, 255, 1)); }
+}
+
+.tile.reachable {
+    cursor: pointer;
+}
+
+#game_board.phase-move .tile:not(.reachable) {
+    filter: brightness(0.5);
+    transition: filter 0.15s ease;
+}
+
+.push_arrow.shift_active {
+    mix-blend-mode: plus-lighter;
+}
+
+#spare_tile.shift_active {
+    animation: shift-glow 1.4s ease-in-out infinite;
+}
+
+.tile img.player-token {
+    inset: auto;
+    width: 62px;
+    height: 62px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    object-fit: contain;
+    z-index: 4;
+}
+
+
+/* ── Push arrows around the board ── */
+
+.push_arrow {
+    position: absolute;
+    z-index: 15;
+    mix-blend-mode: plus-lighter;
+    cursor: pointer;
+    overflow: visible;
+}
+
+/* Image is always 80x52 (natural arrow size), centred in the container,
+   then rotated to face the correct direction. */
+.push_arrow img {
+    position: absolute;
+    width: 70px;
+    top: 50%;
+    left: 50%;
+    object-fit: contain;
+    transform: translateX(-50%) translateY(-50%);
+}
+
+/* Down - above board, cols 1 / 3 / 5 */
+.arrow_down {
+    width: 80px;
+    height: 52px;
+    top: 28px;
+}
+
+.arrow_down[data-col="1"] { left: 668px; }
+.arrow_down[data-col="3"] { left: 857px; }
+.arrow_down[data-col="5"] { left: 1032px; }
+
+/* Up - below board, cols 1 / 3 / 5 */
+.arrow_up {
+    width: 80px;
+    height: 52px;
+    top: 753px;
+}
+
+.arrow_up[data-col="1"] { left: 668px; }
+.arrow_up[data-col="3"] { left: 846px; }
+.arrow_up[data-col="5"] { left: 1036px; }
+
+.arrow_up img { transform: translateX(-50%) translateY(-50%) rotate(180deg); }
+
+/* Right - left of board, rows 1 / 3 / 5 */
+.arrow_right {
+    width: 52px;
+    height: 80px;
+    left: 499px;
+}
+
+.arrow_right[data-row="1"] { top: 203px; }
+.arrow_right[data-row="3"] { top: 385px; }
+.arrow_right[data-row="5"] { top: 570px; }
+
+.arrow_right img { transform: translateX(-50%) translateY(-50%) rotate(-90deg); }
+
+/* Left - right of board, rows 1 / 3 / 5 */
+.arrow_left {
+    width: 52px;
+    height: 80px;
+    left: 1218px;
+}
+
+.arrow_left[data-row="1"] { top: 199px; }
+.arrow_left[data-row="3"] { top: 378px; }
+.arrow_left[data-row="5"] { top: 554px; }
+
+.arrow_left img { transform: translateX(-50%) translateY(-50%) rotate(90deg); }
+
+
+/* ── Portal entrance flash ── */
+
+#portal_flash {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 50%, white 0%, rgba(161, 249, 242, 1) 28%, rgba(71, 173, 183, 0.95) 58%, rgba(10, 30, 100, 0.92) 100%);
+    animation: portal-flash-in 1.3s ease-out forwards;
+}
+
+@keyframes portal-flash-in {
+    0%   { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+
+/* ── Win — heart glow ── */
+
+@keyframes heart-glow {
+    0%, 100% { filter: brightness(1.15) drop-shadow(0 0 6px rgba(255, 240, 160, 0.7)); }
+    50%       { filter: brightness(1.5)  drop-shadow(0 0 18px rgba(255, 240, 160, 1));  }
+}
+
+.heart.glowing {
+    animation: heart-glow 0.75s ease-in-out infinite;
+}
+
+
+/* ── Win — transformed character reveal ── */
+
+@keyframes char-transform-reveal {
+    from { filter: brightness(5) drop-shadow(0 0 50px white); }
+    to   { filter: brightness(1); }
+}
+
+.panel_character.transformed {
+    animation: char-transform-reveal 1s ease-out both;
+}
+
+
+/* ── Win — panel expands to centre ── */
+
+@keyframes panel-to-centre {
+    from {
+        transform: translate(0, 0) scale(1);
+        filter: brightness(1);
+    }
+    to {
+        transform: translate(var(--win-dx), var(--win-dy)) scale(3);
+        filter: brightness(1.6) drop-shadow(0 0 50px rgba(255, 230, 100, 0.9));
+    }
+}
+
+.panel-winner {
+    position: absolute;
+    z-index: 50;
+    margin: 0;
+    animation: panel-to-centre 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+
+/* ── Win UI (SVG text + buttons, right of transformed character) ── */
+
+@keyframes win-ui-in {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+#win_ui {
+    position: absolute;
+    left: 490px;
+    top: 180px;
+    width: 580px;
+    z-index: 55;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: -30px;
+    animation: win-ui-in 0.7s ease-out both;
+}
+
+.win-svg {
+    width: 100%;
+    height: auto;
+    transform: translateY(57px);
+}
+
+.win-btn-row {
+    display: flex;
+    gap: 60px;
+    z-index: 80;
+}
+
+.win-btn {
+    width: 170px;
+    height: 55px;
+    background: rgba(28, 84, 92, 1);
+    border: 3px solid rgba(161, 249, 242, 0.8);
+    border-radius: 18px;
+    box-shadow: 4px 4px 8px #0f1122;
+    font-family: "Cinzel", serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: #BFFFFB;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.win-btn:hover {
+    background: rgba(71, 173, 183, 0.6);
+    box-shadow: 4px 4px 20px rgba(161, 249, 242, 0.45);
+}
+
+
+/* ── Tutorial button (bottom-right) ── */
+
+#tutorial_button {
+    position: absolute;
+    left: 1295px;
+    top: 672px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#tutorial_book {
+    width: 120px;
+    height: auto;
+    filter: drop-shadow(2px 2px 6px rgba(0,0,0,0.6));
+}
+
+#tutorial_label {
+    font-family: "Cinzel Decorative", serif;
+    font-size: 18px;
+    font-weight: 700;
+    background: linear-gradient(172deg, #FFFFFF 13%, #FFE0D2 30%, #EBB884 67%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    filter: drop-shadow(1px 1px 3px rgba(0,0,0,0.8));
+}
