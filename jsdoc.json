@@ -4,11 +4,15 @@
     },
     "source": {
         "include": [
-            "web-app/Module.js"
+            "web-app/menu.js",
+            "web-app/game.js",
+            "web-app/Labyrinth.js",
+            "web-app/Stats.js"
         ],
         "includePattern": "\\.js$",
         "excludePattern": "(node_modules/|docs)"
     },
+
     "plugins": [
         "plugins/markdown"
     ],

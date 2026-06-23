@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en-gb">
 <meta charset="utf-8">
-<title>Labyrinth — New Game</title>
+<title>Labyrinth</title>
 <link rel="stylesheet" href="default.css">
-<link rel="icon" href="./assets/favicon.png">
+<link rel="icon" href="./assets/Earthtransformed.png">
 <script src="menu.js" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -11,14 +11,11 @@
 <body>
     <main id="menu_screen">
 
-        <!-- Two background layers so we can crossfade between closed and open portal -->
         <div id="portal_closed" class="background_layer"></div>
         <div id="portal_open" class="background_layer"></div>
 
-        <!-- LABYRINTH title -->
         <h1 id="game_title">Labyrinth</h1>
 
-        <!-- Player count and start button grouped so they can be centred together -->
         <div id="ui_panel">
             <section id="count_selection">
                 <h2 id="count_selection_label">How Many Players?</h2>
@@ -29,11 +26,9 @@
                 </div>
             </section>
 
-            <!-- Disabled until a player count is picked -->
             <button id="start_button" type="button" disabled>Start Game</button>
         </div>
 
-        <!-- Characters slide in at the bottom once a count is selected -->
         <div id="characters">
             <div class="character" data-count="1">
                 <img src="assets/Earthcharacter.png" alt="Player 1">
@@ -51,7 +46,6 @@
 
     </main>
 
-    <!-- Portal flash overlay — triggered by menu.js before navigation -->
     <div id="portal_flash"></div>
 
 </body>
