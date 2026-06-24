@@ -1,6 +1,6 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/H6lPFq0J)
 # Computing 2 Coursework Submission.
-**CID**: [YOUR CID]
+**CID**: 02626412
 
 This is the submission template for your Computing 2 Applications coursework submission.
 
@@ -20,7 +20,7 @@ I'll run the same commands when I download your repos.
 - [y] Include a `.js ` module file in `/web-app` containing the API using `jsdoc`.
 - [y] Update `/jsdoc.json` to point to this module in `.source.include` (line 7)
 - [y] Compile jsdoc using the run configuration `Generate Docs`
-- [ ] Check the generated docs have compiled correctly.
+- [y] Check the generated docs have compiled correctly.
 
 ### Game Module – Implementation
 *You will implement, in Javascript, the module you specified above. Such that your game can be simulated in code, e.g. in the debug console.*
