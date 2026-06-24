@@ -26,7 +26,7 @@ const Labyrinth = Object.create(null);
  * @typedef {Object} Tile
  * @property {Labyrinth.Shape} shape The tile path shape.
  * @property {Labyrinth.Rotation} rotation The tile rotation.
- * @property {(string | undefined)} heart The heart on the tile (if there is one).
+ * @property {(Labyrinth.Heart | undefined)} heart The heart on the tile, if there is one.
  * @property {boolean} fixed Whether the tile is fixed in place or shiftable.
  */
 
@@ -49,6 +49,12 @@ const Labyrinth = Object.create(null);
  */
 
 /**
+ * A heart colour.
+ * @memberof Labyrinth
+ * @typedef {("green" | "red" | "purple" | "grey")} Heart
+ */
+
+/**
  * A sliding action. Direction is which way the row or column moves.
  * @memberof Labyrinth
  * @typedef {Object} Shift
@@ -68,7 +74,8 @@ const Labyrinth = Object.create(null);
  * @property {number} player_count The number of players in the game.
  * @property {Labyrinth.Player} current_player The player whose turn it is.
  * @property {Labyrinth.Phase} phase The current phase of the turn.
- * @property {(Labyrinth.Position | undefined)} spawned_heart_pos The position where a new heart was spawned.
+ * @property {(Labyrinth.Position | undefined)} spawned_heart_pos
+ * The position where a new heart was spawned.
  * @property {(Labyrinth.Shift | undefined)} last_shift The previous shift.
  * @property {(Labyrinth.Player | undefined)} winner The winning player.
  */
@@ -80,7 +87,7 @@ const Labyrinth = Object.create(null);
 Labyrinth.board_size = 7;
 
 /**
- * The heart colours used in the game (dependent on number of players).
+ * The heart colours assigned to players.
  * @memberof Labyrinth
  */
 Labyrinth.heart = Object.freeze([
@@ -255,8 +262,7 @@ Labyrinth.reachable_positions = function (start, board) {
 };
 
 /**
- * Returns the path the player will move across to reach the destination
- * (shortest path from start to destination).
+ * Returns the path the player will move across to reach the destination.
  * @memberof Labyrinth
  * @function
  * @param {Labyrinth.Position} start The starting position.
@@ -348,7 +354,7 @@ const make_tile = function (shape, rotation, heart, fixed) {
  * Returns the fixed tiles on the board.
  * @memberof Labyrinth
  * @function
- * @returns {Object} The fixed tiles keyed by "column , row".
+ * @returns {Object} The fixed tiles keyed by "column,row".
  */
 Labyrinth.fixed_tiles = function () {
     const corner = function (rotation) {
@@ -397,7 +403,7 @@ const shuffle = function (array) {
     return arr;
 };
 
-const build_movable_area = function (player_count) {
+const build_movable_area = function (player_count, active_hearts) {
     const shapes = [
         ...R.repeat("corner", 12),
         ...R.repeat("straight", 10),
@@ -405,7 +411,6 @@ const build_movable_area = function (player_count) {
     ];
 
     const shuffled_shapes = shuffle(shapes);
-    const active_hearts = Labyrinth.heart.slice(0, player_count);
     const heart_indices = shuffle(R.range(0, shapes.length)).slice(
         0,
         player_count
@@ -431,7 +436,8 @@ const build_movable_area = function (player_count) {
  */
 Labyrinth.new_game = function (player_count) {
     const fixed = Labyrinth.fixed_tiles();
-    const movable_area = build_movable_area(player_count);
+    const active_hearts = Labyrinth.heart.slice(0, player_count);
+    const movable_area = build_movable_area(player_count, active_hearts);
     let area_index = 0;
 
     const board = R.range(0, Labyrinth.board_size).map(function (column) {
@@ -449,7 +455,6 @@ Labyrinth.new_game = function (player_count) {
     });
 
     const spare_tile = movable_area[area_index];
-    const active_hearts = Labyrinth.heart.slice(0, player_count);
 
     const player_hearts = R.repeat(0, player_count);
 
@@ -474,10 +479,9 @@ Labyrinth.new_game = function (player_count) {
 };
 
 /**
- * Returns all legal shifts.
+ * Returns the row and column shifts allowed by the board layout.
  * @memberof Labyrinth
  * @function
- * @param {Labyrinth.GameState} state The current game state.
  * @returns {Labyrinth.Shift[]} The legal shifts.
  */
 Labyrinth.valid_shifts = function () {
@@ -675,11 +679,12 @@ Labyrinth.apply_shift = function (shift, state) {
  * @memberof Labyrinth
  * @function
  * @param {Labyrinth.Player} player The player number.
- * @returns {string} The player's heart colour.
+ * @returns {Labyrinth.Heart} The player's heart colour.
  */
 Labyrinth.current_target = function (player) {
     return Labyrinth.heart[player - 1];
 };
+
 /**
  * Returns how many hearts a player has collected.
  * @memberof Labyrinth
@@ -794,7 +799,7 @@ Labyrinth.apply_move = function (player, destination, state) {
 
     const new_hearts = state.player_hearts.map(function (hearts, index) {
         if (index === player_index && collected) {
-          return hearts + 1;
+            return hearts + 1;
         }
 
         return hearts;

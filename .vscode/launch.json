@@ -28,7 +28,7 @@
                 "<node_internals>/**"
             ],
             // You'll need to change this line below to point to your module.
-            "program": "${workspaceFolder}/web-app/Module.js"
+            "program": "${workspaceFolder}/web-app/Labyrinth.js"
         },
         {
             "name": "Generate Docs",
