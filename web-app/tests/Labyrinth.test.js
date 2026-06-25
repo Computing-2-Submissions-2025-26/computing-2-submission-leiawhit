@@ -2,13 +2,15 @@ import Labyrinth from "../Labyrinth.js";
 import R from "../ramda.js";
 
 /*
-    Tested API: The Shift mechanism of the maze.
+    Tested API: The Shift and Movement mechanisms of the maze.
 
-    Tests for valid_shifts, apply_shift, and position_after_shift.
+    Tests for valid_shifts, apply_shift, position_after_shift, apply_move,
+    heart collection, and winning.
 
     They check that the shift options are right, tiles are not lost or copied,
-    players move with the row or column they are on and the turn changes to
-    the move phase after shifting.
+    players move with the row or column they are on, the turn changes to the
+    move phase after shifting, blocked movement is rejected, hearts can be
+    collected, and the game ends when a player collects three hearts.
 */
 
 // Short state summary in error messages.
@@ -75,6 +77,43 @@ const on_board = function ([column, row]) {
 // Allows a second shift straight away in tests.
 const arm_shift = function (state) {
     return Object.freeze({...state, "phase": "shift"});
+};
+
+// Puts the game into the move phase with player 1 at [3, 3].
+const move_state = function (changes = {}) {
+    const game = Labyrinth.new_game(4);
+    return Object.freeze({
+        ...game,
+        "phase": "move",
+        "current_player": 1,
+        "player_positions": [[3, 3], [6, 0], [6, 6], [0, 6]],
+        ...changes
+    });
+};
+
+// Returns the heart on a board tile, if there is one.
+const heart_at = function (state, [column, row]) {
+    return state.board[column][row].heart;
+};
+
+// Returns a copy of the state with one tile given a chosen heart colour.
+const with_heart_at = function (state, [column, row], heart) {
+    const new_board = state.board.map(function (column_tiles, column_index) {
+        return column_tiles.map(function (tile, row_index) {
+            if (column_index === column && row_index === row) {
+                return Object.freeze({
+                    ...tile,
+                    "heart": heart
+                });
+            }
+            return tile;
+        });
+    });
+
+    return Object.freeze({
+        ...state,
+        "board": Object.freeze(new_board.map(Object.freeze))
+    });
 };
 
 describe("Valid shifts", function () {
@@ -278,7 +317,7 @@ Then the board and spare tile go back to the start.`,
             }
         }
     );
-});
+
     it(
         "A player on the shifted line is carried with it.",
         function () {
@@ -304,6 +343,8 @@ Then the board and spare tile go back to the start.`,
             }
         }
     );
+});
+
 // Every board position as [column, row].
 const every_position = R.xprod(
     R.range(0, Labyrinth.board_size),
@@ -491,3 +532,111 @@ describe("Position after a shift", function () {
         }
     );
 });
+
+describe("Moving a player", function () {
+    it(
+        "A player collects their own colour heart when moving onto it.",
+        function () {
+            const target = Labyrinth.current_target(1);
+            const state = with_heart_at(move_state(), [3, 3], target);
+            const before = Labyrinth.hearts_collected(1, state);
+            const after = Labyrinth.apply_move(1, [3, 3], state);
+
+            if (Labyrinth.hearts_collected(1, after) !== before + 1) {
+                throw new Error(
+                    "Moving onto an own-colour heart did not raise the " +
+                    "count by one (" + before + " -> " +
+                    Labyrinth.hearts_collected(1, after) + ")." +
+                    describe_state(after)
+                );
+            }
+
+            if (heart_at(after, [3, 3]) !== undefined) {
+                throw new Error(
+                    "The collected heart was not cleared from the tile." +
+                    describe_state(after)
+                );
+            }
+        }
+    );
+
+    it(
+        "A player does not collect another player's colour heart.",
+        function () {
+            const target = Labyrinth.current_target(1);
+            // Any colour that is not this player's target.
+            const other = Labyrinth.heart.find(function (colour) {
+                return colour !== target;
+            });
+            const state = with_heart_at(move_state(), [3, 3], other);
+            const after = Labyrinth.apply_move(1, [3, 3], state);
+
+            if (Labyrinth.hearts_collected(1, after) !== 0) {
+                throw new Error(
+                    "A player collected a heart of the wrong colour." +
+                    describe_state(after)
+                );
+            }
+
+            if (heart_at(after, [3, 3]) !== other) {
+                throw new Error(
+                    "A wrong-colour heart was removed even though it was " +
+                    "not collected." + describe_state(after)
+                );
+            }
+        }
+    );
+
+    it(
+        "A player wins after collecting three hearts.",
+        function () {
+            const target = Labyrinth.current_target(1);
+            // Already holds two; collecting one more makes three.
+            const state = with_heart_at(
+                move_state({"player_hearts": [2, 0, 0, 0]}),
+                [3, 3],
+                target
+            );
+            const after = Labyrinth.apply_move(1, [3, 3], state);
+
+            if (Labyrinth.hearts_collected(1, after) !== 3) {
+                throw new Error(
+                    "Expected the player to hold three hearts after " +
+                    "winning." + describe_state(after)
+                );
+            }
+
+            if (after.winner !== 1) {
+                throw new Error(
+                    "The third heart did not record player 1 as the " +
+                    "winner." + describe_state(after)
+                );
+            }
+
+            if (!Labyrinth.is_ended(after)) {
+                throw new Error(
+                    "The game was not reported as ended after a win." +
+                    describe_state(after)
+                );
+            }
+        }
+    );
+
+    it(
+        "A blocked move is rejected.",
+        function () {
+            // On the vertically-linked board, columns do not connect sideways,
+            // so [4, 5] has no open path from the player at [3, 3].
+            const state = move_state();
+            const after = Labyrinth.apply_move(1, [4, 5], state);
+
+            if (after !== undefined) {
+                throw new Error(
+                    "A blocked move was accepted; apply_move should have " +
+                    "returned undefined." + describe_state(after)
+                );
+            }
+        }
+    );
+});
+

@@ -25,13 +25,13 @@ I'll run the same commands when I download your repos.
 ### Game Module – Implementation
 *You will implement, in Javascript, the module you specified above. Such that your game can be simulated in code, e.g. in the debug console.*
 
-- [ ] The file above should be fully implemented.
+- [y] The file above should be fully implemented.
 
 ### Unit Tests – Specification
 *For the Game module API you have produced, write a set of unit tests descriptions that specify the expected behaviour of one aspect of your API, e.g. you might pick the win condition, or how the state changes when a move is made.*
 
-- [ ] Write unit test definitions in `/web-app/tests`.
-- [ ] Check the headings appear in the Testing sidebar.
+- [y] Write unit test definitions in `/web-app/tests`.
+- [y] Check the headings appear in the Testing sidebar.
 
 ### Unit Tests – Implementation
 *Implement in code the unit tests specified above.*
@@ -42,12 +42,12 @@ I'll run the same commands when I download your repos.
 *Produce a web application that allows a user to interface with your game module.*
 
 - Implement in `/web-app`
-  - [ ] `index.html`
-  - [ ] `default.css`
-  - [ ] `main.js`
-  - [ ] Any other files you need to include.
+  - [y] `index.html`
+  - [y] `default.css`
+  - [y] `main.js`
+  - [y] Any other files you need to include.
 
 ### Finally
-- [ ] Push to GitHub.
-- [ ] Sync the changes.
-- [ ] Check submission on GitHub website.
+- [y] Push to GitHub.
+- [y] Sync the changes.
+- [y] Check submission on GitHub website.

@@ -6,6 +6,10 @@
   "main": "web-app/Labyrinth.js",
   "author": "",
   "license": "ISC",
+  "scripts": {
+    "test": "mocha \"web-app/tests/**/*.js\"",
+    "docs": "jsdoc -c jsdoc.json"
+  },
   "dependencies": {
     "ramda": "^0.32.0"
   },
